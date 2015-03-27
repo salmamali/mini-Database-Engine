@@ -20,6 +20,9 @@ public class Bucket {
 	}
 	
 	public void remove(String val) {
-		this.bucket.remove(this.bucket.indexOf(val));
+		for (String string : bucket) {
+			if (string.contains(val))
+				bucket.remove(bucket.indexOf(string));
+		}
 	}
 }

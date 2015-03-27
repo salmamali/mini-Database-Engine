@@ -22,11 +22,11 @@ class Node {
 
 
 public class KDTree {
-
+    String name;
 	Node root;
 	String key1Name;
 	String key2Name;
-	int max = 3;
+	int max = 2;
 	int columnNumberOfKey1 = 0; // assign it to the column number of key one(the
 								// Table has a hashtable of columns, this
 								// variable
@@ -35,7 +35,8 @@ public class KDTree {
 	int columnNumberOfKey2 = 0; // like the previous variable
 	Table table; // assign it to the table you build the kd on
 
-	public KDTree(int maxPerBucket) {
+	public KDTree(int maxPerBucket, String name) {
+		this.name = name;
 		key1Name = "";
 		key2Name = "";
 		this.root = new Node();
@@ -78,11 +79,11 @@ public class KDTree {
 			if (cmp >= 0) {
 				if (parent.leftBucket == null) {
 					parent.leftBucket = new Bucket();
-					parent.leftBucket.put(value);
+					parent.leftBucket.put(k1+','+k2+','+value);
 				} else {
 					Bucket tempbucket = parent.leftBucket;
 					if (tempbucket.bucket.size() < this.max) {
-						parent.leftBucket.put(value);
+						parent.leftBucket.put(k1+','+k2+','+value);
 					} else {
 						Node tempNode = new Node();
 						tempNode.parent = parent;
@@ -136,12 +137,12 @@ public class KDTree {
 			} else {
 				if (parent.rightBucket == null) {
 					parent.rightBucket = new Bucket();
-					parent.rightBucket.put(value);
+					parent.rightBucket.put(k1+','+k2+','+value);
 				} else {
 
 					Bucket tempbucket = parent.rightBucket;
 					if (tempbucket.bucket.size() < this.max) {
-						parent.rightBucket.put(value);
+						parent.rightBucket.put(k1+','+k2+','+value);
 					} else {
 						Node tempNode = new Node();
 						tempNode.parent = parent;
@@ -183,9 +184,9 @@ public class KDTree {
 							cmp2 = k2.compareTo(tempNode.key);
 						}
 						if (cmp2 >= 0) {
-							tempNode.leftBucket.put(value);
+							tempNode.leftBucket.put(k1+','+k2+','+value);
 						} else {
-							tempNode.leftBucket.put(value);
+							tempNode.leftBucket.put(k1+','+k2+','+value);
 						}
 					}
 
@@ -196,38 +197,47 @@ public class KDTree {
 	}
 
 	// Remove methode
-	public void remove(String toRemove) {
-		if (root.key == toRemove) {
-			if (root.leftBucket.bucket.contains(toRemove)) {
-				root.leftBucket.remove(toRemove);
+	public void remove(String key1, String key2) {
+		if (root.key == key1){
+			if (root.leftBucket != null)
+				root.leftBucket.remove(key1+','+key2);
+		}
+				if(root.key == key2) {
+			if (root.leftBucket != null) {
+				root.leftBucket.remove(key1+','+key2);
 			}
-			if (root.rightBucket != null) {
-				if (root.rightBucket.bucket.contains(toRemove)) {
-					root.rightBucket.remove(toRemove);
-				}
-			}
-			
 		} else {
-			int level = 1; // how will i define which Dimension is it ?
+ // how will i define which Dimension is it ?
 			int cmp = 0;
 			Node current = root;
+			int level=1;
 			while (current != null) {
-				cmp = toRemove.compareTo(current.key);
+				if (current.leftBucket != null) {
+					current.leftBucket.remove(key1+','+key2);
+					break;
+				}
+				if (current.rightBucket != null) {
+					current.rightBucket.remove(key1+','+key2);
+					break;
+				}
+				if(level%2 == 1)
+				cmp = key1.compareTo(current.key);
+				else 
+				cmp = key2.compareTo(current.key);	
 				if (cmp >= 0) {
 					current = current.left;
 					if (current.leftBucket != null) {
-						if (current.leftBucket.bucket.contains(toRemove)) {
-							current.leftBucket.remove(toRemove);
+							current.leftBucket.remove(key1+','+key2);
+							break;
 						}
-					}
 				} else {
 					current = current.right;
 					if (current.rightBucket != null) {
-						if (current.rightBucket.bucket.contains(toRemove)) {
-							current.rightBucket.remove(toRemove);
+							current.rightBucket.remove(key1+','+key2);
+							break;
 						}
-					}
 				}
+				level++;
 			}
 		}
 	}
@@ -317,10 +327,10 @@ public class KDTree {
 	}
 
 	public static void main(String[] args) {
-		KDTree k = new KDTree(3);
+		KDTree k = new KDTree(3,"name");
 		k.put("mariam", "25", "Employee,2,4");
 		k.put("sara", "21", "Employee,4,6");
-		k.put("ssara", "22", "Employee,4,5");
+	    k.put("ssara", "22", "Employee,4,5");
 		//k.put("sssara", "22", "Employee,4,5");
 		k.put("alaa", "24", "Employee,2,5");
 		k.columnNumberOfKey1 = 3;
@@ -331,9 +341,9 @@ public class KDTree {
 		// tempRecords.add("1,0,3,aager,35");
 		// tempRecords.add("1,0,4,yara,21");
 		// System.out.println(k.getAvg(tempRecords, 2));
-		System.out.println(k.root.rightBucket.bucket.size());
-		//System.out.println(k.root.left.leftBucket.bucket.size());
-		//System.out.println(k.root.left.leftBucket.bucket.size());
+		System.out.println(k.root.rightBucket.bucket.get(0));
+		//System.out.println(k.root.left.leftBucket.bucket.get(0));
+		//System.out.println(k.root.left.leftBucket.bucket.get(0));
 	}
 
 }
