@@ -24,6 +24,7 @@ public class Page implements Serializable {
 			tuples[i][currentLine] = en.nextElement();
 			i--;
 		}
+		currentLine++;
 	}
 	public boolean exceedLimit(){
 		if(tuples[0].length==199)
